@@ -44,5 +44,26 @@ namespace fish {
         public get isLoaded(): boolean {
             return this.mIsLoaded;
         }
+
+        //dispose
+        public get autoDispose():boolean {
+            return this.mAutoDispose;
+        }
+        public set autoDispose(value:boolean) {
+            if(this.mAutoDispose != value) {
+                this.mAutoDispose = value;
+                if(this.resGroup && !value) {
+                    let items = RES.getGroupByName(this.resGroup);
+                    for(let i = 0; i < items.length; i++) {
+                        let item = items[i];
+                        let itemName = item.name;
+                        if(item.type == RES.ResourceItem.TYPE_SHEET) {
+                            itemName = VersionManager.removeResUrlVersion(item.url).replace('.json', '.png');
+                        }
+                        ResourceManager.setDisposeBlackFilter(itemName);
+                    }
+                }
+            }
+        }
     }
 }

@@ -15,12 +15,15 @@
 		"bin-debug/Main.js",
 		"bin-debug/Platform.js",
 		"bin-debug/ThemeAdapter.js",
+		"bin-debug/frameWork/effect/IEffect.js",
 		"bin-debug/frameWork/resource/ResourceManager.js",
 		"bin-debug/LoadingUI.js",
+		"bin-debug/frameWork/resource/VersionManager.js",
 		"bin-debug/frameWork/resource/ViewResource.js",
 		"bin-debug/frameWork/view/IScreen.js",
 		"bin-debug/frameWork/view/IView.js",
 		"bin-debug/frameWork/view/IWindow.js",
+		"bin-debug/frameWork/view/IWindowEffect.js",
 		"bin-debug/frameWork/view/ViewAgent.js"
 	]
 }
