@@ -26,6 +26,9 @@
     },
     {
 			"name": "dragonBones"
+		},
+    {
+			"name": "promise"
 		}
   ]
 }

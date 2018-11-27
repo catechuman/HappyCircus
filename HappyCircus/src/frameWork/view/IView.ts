@@ -10,8 +10,6 @@ namespace fish {
         isOpen: boolean;
         //是否已初始化
         isInitialized: boolean;
-        //窗口背景
-        backGround: any;
         //加载
         load(skinUrl?: string, resGroup?: string, onComplete?: Function, onError?: Function, thisObject?: any): boolean;
         //显示

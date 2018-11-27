@@ -215,8 +215,8 @@ namespace fish {
         //屏幕居中适配
         public centerStage():void {
             let view = this.view;
-            // view.width = StageManager.stageWidth;
-            // view.height = StageManager.stageHeight;
+            view.width = StageManager.stageWidth;
+            view.height = StageManager.stageHeight;
             view.anchorOffsetX = view.width * 0.5;
             view.anchorOffsetY = view.height * 0.5;
             view.x = view.anchorOffsetX;

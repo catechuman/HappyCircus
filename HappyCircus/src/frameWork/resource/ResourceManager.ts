@@ -49,11 +49,11 @@ namespace fish {
         //set resource dispose
         public static setDisposeBlackFilter(blackFilter: string | string[]): void {
             let addBlack = (filter: string) => {
-                if(this.resDisposeBlackMap.indexOf(filter) == -1) {
+                if (this.resDisposeBlackMap.indexOf(filter) == -1) {
                     this.resDisposeBlackMap.push(filter);
-                    for(let code in this.resMap) {
+                    for (let code in this.resMap) {
                         let res = this.resMap[code];
-                        if(res.res.indexOf(filter) != -1) {
+                        if (res.res.indexOf(filter) != -1) {
                             res.dispose = false;
                             break;
                         }
@@ -64,10 +64,101 @@ namespace fish {
             if (typeof blackFilter == 'string') {
                 addBlack.call(this, blackFilter);
             } else {
-                for(let filter of blackFilter) {
+                for (let filter of blackFilter) {
                     addBlack.call(this, filter);
                 }
             }
+        }
+
+        //通用的资源加载--支持本地及远程（url/DisplayObject/Texture/class）
+        public static loadResource(source: any, onComplete: Function, thisObj: any, type?: string, onError?: Function): void {
+            let onGetRes = (data: any) => {
+                if (onComplete) {
+                    if (onComplete.length == 1) {
+                        onComplete.call(thisObj, data);
+                    } else if (onComplete.length == 2) {
+                        onComplete.call(thisObj, data, source);
+                    } else {
+                        onComplete.call(thisObj);
+                    }
+                }
+            }
+
+            let content: any = source;
+            if (source.prototype) {
+                content = new source();
+            }
+            if (content instanceof egret.DisplayObject || content instanceof egret.Texture) {
+                onComplete.call(thisObj, content, source);
+            } else if (typeof (source) == 'string') {
+                if (!type) {
+                    type = ResourceManager.getTypeByUrl(source);
+                }
+                if (!RES.hasRes(source)) {
+                    RES.getResByUrl(source, onGetRes, this, type)
+                        .catch((reason) => {
+                            if (onError) onError.call(thisObj);
+                        })
+                } else {
+                    let data = RES.getRes(source);
+                    if (data) {
+                        onGetRes(data);
+                    } else {
+                        let p = RES.getResAsync(source) as Promise<any>;
+                        p.then((data) => {
+                            onGetRes(data);
+                        }, (reason) => {
+                            if (onError) onError.call(thisObj);
+                        });
+                    }
+                }
+            } else {
+                onComplete.call(thisObj, content, source);
+            }
+        }
+
+        //通过url判断加载文件的类型
+        public static getTypeByUrl(url: string): string {
+            let suffix: string = url.toLowerCase().split('?')[0];
+            suffix = suffix.substr(suffix.lastIndexOf('.') + 1);
+            if (suffix) {
+                suffix = suffix.toLowerCase();
+            }
+
+            let type: string = '';
+            switch (suffix) {
+                case RES.ResourceItem.TYPE_XML:
+                case RES.ResourceItem.TYPE_JSON:
+                case RES.ResourceItem.TYPE_SHEET:
+                    type = suffix;
+                    break;
+                case 'png':
+                case 'jpg':
+                case 'gif':
+                    type = RES.ResourceItem.TYPE_IMAGE;
+                    break;
+                case 'fnt':
+                    type = RES.ResourceItem.TYPE_FONT;
+                    break;
+                case 'txt':
+                case 'exml':
+                    type = RES.ResourceItem.TYPE_TEXT;
+                    break;
+                case 'mp3':
+                case 'ogg':
+                case 'mpeg':
+                case 'wav':
+                case 'mp4':
+                case 'aiff':
+                case 'wma':
+                case 'mid':
+                    type = RES.ResourceItem.TYPE_SOUND;
+                    break;
+                default:
+                    type = RES.ResourceItem.TYPE_BIN;
+                    break;
+            }
+            return type;
         }
     }
 }
