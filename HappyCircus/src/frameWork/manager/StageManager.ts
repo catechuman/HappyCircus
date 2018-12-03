@@ -100,5 +100,56 @@ namespace fish {
             }
             return -1;
         }
+
+        /**
+         * 创建全局的黑色遮罩
+         * @param onTouch 点击遮罩的回调
+         * @param thisObj 
+         * @param modalColor 
+         * @param modalAlpha 
+         */
+        public static createStageModalBlocker(onTouch:Function = null, thisObj:any = null, modalColor:number = 0x0, modalAlpha:number = 0.75):StageModalBlocker {
+            let blocker :StageModalBlocker = new StageModalBlocker(onTouch, thisObj, modalColor, modalAlpha);
+            return blocker;
+        }
+    }
+
+    //舞台全屏遮罩
+    export class StageModalBlocker extends eui.Image {
+        private onTouch:Function;
+        private thisObj:any;
+        private static texture:egret.RenderTexture;
+        constructor(onTouch:Function = null, thisObj:any = null, modalColor:number = 0x0, modalAlpha:number = 0.75) {
+            super();
+            this.onTouch = onTouch;
+            thisObj = thisObj;
+            this.alpha = modalAlpha;
+
+            this.touchEnabled = true;
+            this.addEventListener(egret.TouchEvent.TOUCH_TAP, this.onBlockTouch, this);
+            StageManager.addResizeListener(this.onResize, this);
+            this.initTexture();
+        }
+
+        private initTexture():void {
+            this.source = '';
+        }
+
+        public removeFromParent(dispose:boolean = false) :void {
+            if(this.parent) {
+                this.parent.removeChild(this);
+            }
+        }
+
+        private onResize():void {
+            this.width = StageManager.stageWidth;
+            this.height = StageManager.stageHeight;
+        }
+
+        private onBlockTouch():void {
+            if(this.onTouch) {
+                this.onTouch.call(this.thisObj);
+            }
+        }
     }
 }

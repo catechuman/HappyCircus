@@ -1,7 +1,7 @@
 namespace fish {
     export interface IScreen extends IView {
-        currentView:number;
-        registView(viewId:number, view:any):void;
+        currentView:string;
+        registView(viewId:string, view:any):void;
         unRegistView(viewId:string):void;
         hasView(viewId:string):boolean;
         getView(viewId:string):IView;

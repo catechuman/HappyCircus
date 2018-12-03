@@ -5,7 +5,7 @@ namespace fish {
         //窗口的name
         id: string;
         //效果设置
-        // effect:IEffect;
+        effect:IEffect;
         //是否打开
         isOpen: boolean;
         //是否已初始化
