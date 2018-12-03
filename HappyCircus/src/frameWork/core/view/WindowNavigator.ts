@@ -310,28 +310,36 @@ namespace fish {
             return false;
         }
 
+        //是否处于加载状态
+        public get isLoading(): boolean {
+            if (this.currentWindow != '' && this.windowMap[this.currentWindow]) {
+                return (<WindowData>this.windowMap[this.currentWindow]).isLoading;
+            }
+            return false;
+        }
+
         //是否有遮罩
-        public get isModaling():boolean {
-            if(this.modalBlocker.parent) {
+        public get isModaling(): boolean {
+            if (this.modalBlocker.parent) {
                 return true;
             }
 
-             let windowData :WindowData;
-             let acCount:number = this.activeWindows.length;
-             for(let i = acCount - 1; i >= 0; i--) {
-                 windowData = this.getWindowData(this.activeWindows[i]);
-                 if(windowData.modal >= 0 && windowData.groupId == '') {
-                     return true;
-                 }
-             }
-             return false;
+            let windowData: WindowData;
+            let acCount: number = this.activeWindows.length;
+            for (let i = acCount - 1; i >= 0; i--) {
+                windowData = this.getWindowData(this.activeWindows[i]);
+                if (windowData.modal >= 0 && windowData.groupId == '') {
+                    return true;
+                }
+            }
+            return false;
         }
 
         //显示view
-        public showWindow(windowId:string, data:any = null, parent:egret.DisplayObjectContainer = null, onOpen?:Function, onClose?:Function, thisObj?:any, windowLevel:number = -1) {
-            let windowData:WindowData = this.windowMap[windowId];
-            if(windowData) {
-                if(windowLevel != -1) {
+        public showWindow(windowId: string, data: any = null, parent: egret.DisplayObjectContainer = null, onOpen?: Function, onClose?: Function, thisObj?: any, windowLevel: number = -1) {
+            let windowData: WindowData = this.windowMap[windowId];
+            if (windowData) {
+                if (windowLevel != -1) {
                     windowData.level = windowLevel;
                 }
 
@@ -341,6 +349,16 @@ namespace fish {
                 windowData.parent = parent;
                 this.currentWindow = windowId;
             }
+        }
+
+        //返回
+        public back(): boolean {
+            if (this.windowSequence.length > 1) {
+                this.windowSequence.pop();
+                this.currentWindow = this.windowSequence.pop();
+                return true;
+            }
+            return false;
         }
 
         //窗口模板------------------------------------------>>>>>>>
@@ -366,12 +384,12 @@ namespace fish {
         }
 
         //遮罩的点击
-        private onStageModeTouch():void {
-            let windowData:WindowData = this.getWindowData(this.modalId);
-            if(windowData.modalClickHide && windowData.isOpen) this.hideWindow(this.modalId);
+        private onStageModeTouch(): void {
+            let windowData: WindowData = this.getWindowData(this.modalId);
+            if (windowData.modalClickHide && windowData.isOpen) this.hideWindow(this.modalId);
         }
         ///--------------------------------------窗口模板  ------end
-        
+
         //是否是组窗口
         public isWindowGroup(windowId: string = ''): boolean {
             let windowData: any = this.getWindowData(windowId);

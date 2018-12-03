@@ -213,7 +213,7 @@ namespace fish {
         }
 
         //屏幕居中适配
-        public centerStage():void {
+        public centerStage(): void {
             let view = this.view;
             view.width = StageManager.stageWidth;
             view.height = StageManager.stageHeight;
@@ -242,23 +242,23 @@ namespace fish {
             }
         }
 
-        public partAdded(partName:string, instance:any):void {
+        public partAdded(partName: string, instance: any): void {
             instance.id = partName;
-            if(this.partMap) {
+            if (this.partMap) {
                 this.partMap.addPart(partName);
             }
         }
 
         //设置节点刘海适配--iphonex等
-        public setNotchFit(element:egret.DisplayObject):void {
+        public setNotchFit(element: egret.DisplayObject): void {
             element['notchFit'] = true;
         }
 
         //添加点击事件
-        public addClick(target:egret.EventDispatcher, callBack:Function, thisObj:any):void {
+        public addClick(target: egret.EventDispatcher, callBack: Function, thisObj: any): void {
             target.addEventListener(egret.TouchEvent.TOUCH_TAP, callBack, thisObj);
         }
-        public removeClick(target:egret.EventDispatcher, callBack:Function, thisObj:any):void {
+        public removeClick(target: egret.EventDispatcher, callBack: Function, thisObj: any): void {
             target.removeEventListener(egret.TouchEvent.TOUCH_TAP, callBack, thisObj);
         }
         //set data
@@ -361,10 +361,10 @@ namespace fish {
                 }
             }
 
-            // if(SystemManager.isNotchMobile && this.notchFit) {
-            //     display.y += 60;
-            //     display.to += 60;
-            // }
+            if (SystemManager.isNotchMobile && this.notchFit) {
+                display.y += 60;
+                display.to += 60;
+            }
         }
         public reset(display: any): void {
             if (display.hasBinder) return;
@@ -378,10 +378,10 @@ namespace fish {
                     display[key] = this[key];
                 }
             }
-            // if(SystemManager.isNotchMobile && this.notchFit) {
-            //     display.y += 60;
-            //     display.top += 60;
-            // }
+            if (SystemManager.isNotchMobile && this.notchFit) {
+                display.y += 60;
+                display.top += 60;
+            }
         }
 
     }

@@ -6,6 +6,29 @@ namespace fish {
         public static dragonFactory = new dragonBones.EgretFactory();
         public static resourceRoot: string;
 
+        public static initialize(version: string, resourceRoot: string, onComplete?: Function, onError?: Function, thisObj?: any): void {
+            ResourceManager.resourceRoot = resourceRoot ? resourceRoot : '';
+            RES.setMaxRetryTimes(3);//设置重试次数
+            if (fish.SystemManager.isWxGame && fish.SystemManager.isIOS) {
+                RES.setMaxLoadingThread(1);
+            }
+            //inject the custom material parser
+            //注入自定义的素材解析器
+            let assetAdapter = new AssetAdapter();
+            egret.registerImplementation("eui.IAssetAdapter", assetAdapter);
+            egret.registerImplementation("eui.IThemeAdapter", new ThemeAdapter());
+            // RES.processor.map(RES.ResourceItem.TYPE_SHEET, SheetProcessor);//重写sheet加载
+            let onConfigComplete = () => {
+                fish.Log.fatal("ResourceManager:default.res.json load suc");
+                onComplete.call(thisObj);
+            }
+            //加载资源配置文件
+            RES.loadConfig('default.res.json', resourceRoot)
+                .then(onConfigComplete, () => {
+                    fish.Log.error('加载default.res.json失败了。')
+                });
+        }
+
         public static loadViewResource(resGroupName: string, onComplete: Function = null, onError?: Function, thisObj?: any): ViewResource {
             let res: ViewResource = ResourceManager.getViewResource(resGroupName);
             if (res == null) {
@@ -44,6 +67,15 @@ namespace fish {
         //加载皮肤文件
         public static loadSkin(url: string, onComplete?: (clazz: any, url: string) => void, thisObj: any = null): void {
             EXML.load(url, onComplete, thisObj);
+        }
+
+        //加载皮肤json文件并解析
+        public static loadSkinJson(url: string, onComplete?: Function, onError?: Function, thisObj: any = null): void {
+            ResourceManager.loadResource(url, (data) => {
+                fish.Log.log("load SkinJson:" + url);
+                window["JSONParseClass"]["setData"](data);
+                onComplete.call(thisObj, generateJSON);
+            }, this, RES.ResourceItem.TYPE_JSON, onError);
         }
 
         //set resource dispose

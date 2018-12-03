@@ -28,33 +28,46 @@
 //////////////////////////////////////////////////////////////////////////////////////
 
 class Main extends eui.UILayer {
-
-
+    public isWxgame: boolean = false;
     protected createChildren(): void {
         super.createChildren();
+        egret.ImageLoader.crossOrigin = "anonymous";
+        this.stage.maxTouches = 1;
+        this.stage.frameRate = 60;
+        this.isWxgame = fish.SystemManager.isWxGame;
 
-        egret.lifecycle.addLifecycleListener((context) => {
-            // custom lifecycle plugin
-        })
+        fish.StageManager.initialize(this.stage, this);
+        game.ComFunc.checkMobileDevice();
+        this.initConfig();
+    }
 
-        egret.lifecycle.onPause = () => {
-            egret.ticker.pause();
-        }
+    //初始化配置
+    private initConfig(): void {
+        this.initResDisposeBlack();
+        this.initResourceManager();
+    }
 
-        egret.lifecycle.onResume = () => {
-            egret.ticker.resume();
-        }
+    //初始化资源释放黑名单
+    private initResDisposeBlack(): void {
+        // fish.ResourceManager.setDisposeBlackFilter(["image/tabbar"]);
+    }
 
-        //inject the custom material parser
-        //注入自定义的素材解析器
-        let assetAdapter = new AssetAdapter();
-        egret.registerImplementation("eui.IAssetAdapter", assetAdapter);
-        egret.registerImplementation("eui.IThemeAdapter", new ThemeAdapter());
+    //初始化resourceManager
+    private initResourceManager(): void {
+        fish.ResourceManager.initialize(game.GameConfig.version, game.GameConfig.resRoot, this.loadTheme, null, this);
+    }
 
-
-        this.runGame().catch(e => {
-            console.log(e);
-        })
+    //加载皮肤--可以考虑多种形式
+    private loadTheme(): void {
+        // if (!RELEASE) {
+        //     var theme = new eui.Theme(`resource/default.thm.json`, this.stage);
+        //     theme.addEventListener(egret.Event.COMPLETE, this.startLoadingAsset, this);
+        // } else {
+        //     fish.ResourceManager.loadSkinJson("assets/skins/component_EUI.json", this.startLoadingAsset, this.quitGame, this);
+        // }
+        //使用com2
+        let theme = new eui.Theme(`resource/default.thm.json`, this.stage);
+        theme.addEventListener(egret.Event.COMPLETE, this.loadResource, this);
     }
 
     private async runGame() {
@@ -62,36 +75,40 @@ class Main extends eui.UILayer {
         this.createGameScene();
         const result = await RES.getResAsync("description_json")
         this.startAnimation(result);
-        await platform.login();
-        const userInfo = await platform.getUserInfo();
-        console.log(userInfo);
-
     }
 
-    private async loadResource() {
-        try {
-            const loadingView = new LoadingUI();
-            this.stage.addChild(loadingView);
-            await RES.loadConfig("resource/default.res.json", "resource/");
-            await this.loadTheme();
-            await RES.loadGroup("preload", 0, loadingView);
-            this.stage.removeChild(loadingView);
-        }
-        catch (e) {
-            console.error(e);
+    private loadResource() {
+        fish.ResourceManager.loadViewResource("common", () => {
+            this.initGame();
+            this.loginGame();
+        }, this.quitGame, this).autoDispose = false;
+    }
+
+    //必要时退出游戏
+    private quitGame(): void {
+        if (this.isWxgame) {
+            wx.showModal("友情提示", "游戏出现异常，请退出重试", false, "取消", null, "退出", "#3cc51f", () => {
+                wx.exitMiniProgram(() => { }, () => { }, (res) => { fish.Log.fatal("退出游戏"); });
+            });
+        } else {
+            if (confirm("游戏出现异常，请退出重试")) {}
         }
     }
 
-    private loadTheme() {
-        return new Promise((resolve, reject) => {
-            // load skin theme configuration file, you can manually modify the file. And replace the default skin.
-            //加载皮肤主题配置文件,可以手动修改这个文件。替换默认皮肤。
-            let theme = new eui.Theme("resource/default.thm.json", this.stage);
-            theme.addEventListener(eui.UIEvent.COMPLETE, () => {
-                resolve();
-            }, this);
+    private initGame():void {
+        baseModel = new game.BaseModel();
+        fish.WindowManager.initialize(new game.GameWindowNavigator());
+        fish.ScreenManager.initialize(new game.GameScreenNavigator());
+        // fish.TipManager.initialize(this.stage, game.SimpleAlertRenderer, game.SimpleTipRenderer, game.SimpleBubbleRenderer, game.SimpleUiTipRenderer);
+        fish.Register.initialize(game.WindowRegister);
+        fish.Register.initialize(game.ScreenRegister);
+        fish.Register.initialize(game.SoundRegister);
+        fish.StageManager.stageOffHeight = fish.StageManager.stageHeight - 1039;
+        fish.StageManager.stageOffHeight = fish.StageManager.stageOffHeight > 0 ? fish.StageManager.stageOffHeight : 0;
+    }
 
-        })
+    private loginGame():void {
+        fish.ScreenManager.currentScreen = game.ScreenType.MainLoop;
     }
 
     private textfield: egret.TextField;

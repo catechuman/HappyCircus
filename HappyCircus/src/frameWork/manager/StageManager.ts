@@ -14,7 +14,7 @@ namespace fish {
         private static root: egret.DisplayObjectContainer;
         private static resizeTimer: number;
         private static resizeListeners: Array<Object> = [];
-        private static stageOffHeight: number = 0;
+        public static stageOffHeight: number = 0;
 
         public static initialize(stage: egret.Stage, root: egret.DisplayObjectContainer): void {
             StageManager.stage = stage;
@@ -60,6 +60,15 @@ namespace fish {
             layer.name = layerName;
         }
 
+        public static getLayer(layerName: any): egret.DisplayObjectContainer {
+            layerName = typeof (layerName) == "number" ? Layer[layerName] : layerName;
+            let layer: egret.DisplayObject = this.root.getChildByName(layerName);
+            if (layer)
+                return <egret.DisplayObjectContainer><any>layer;
+
+            return null;
+        }
+
         //舞台的宽
         public static get stageWidth(): number {
             return StageManager.stage.stageWidth;
@@ -75,26 +84,26 @@ namespace fish {
          * @param listener 回调函数
          * @param thisObj 
          */
-        public static addResizeListener(listener:Function, thisObj:any):void {
-            if(this.getCallBackIndex(StageManager.resizeListeners, listener, thisObj) == -1) {
-                StageManager.resizeListeners.push({func:listener, thisObj:thisObj});
+        public static addResizeListener(listener: Function, thisObj: any): void {
+            if (this.getCallBackIndex(StageManager.resizeListeners, listener, thisObj) == -1) {
+                StageManager.resizeListeners.push({ func: listener, thisObj: thisObj });
                 listener.call(thisObj);
             }
         }
 
         //移除自适应回调函数
-        public static removeResizeListener(listener:Function, thisObj:any):void {
-            let index:number = this.getCallBackIndex(StageManager.resizeListeners, listener, thisObj);
-            if(index != -1) {
+        public static removeResizeListener(listener: Function, thisObj: any): void {
+            let index: number = this.getCallBackIndex(StageManager.resizeListeners, listener, thisObj);
+            if (index != -1) {
                 StageManager.resizeListeners.splice(index, 1);
             }
         }
 
-        private static getCallBackIndex(callBacks:Array<any>, callBack:Function, thisObj:any):number {
-            let len:number = callBacks.length;
-            for(let i = 0; i< len;i++) {
-                let callObj:Object = callBacks[i];
-                if(callObj['func'] === callBack && callObj['thisObj'] === thisObj) {
+        private static getCallBackIndex(callBacks: Array<any>, callBack: Function, thisObj: any): number {
+            let len: number = callBacks.length;
+            for (let i = 0; i < len; i++) {
+                let callObj: Object = callBacks[i];
+                if (callObj['func'] === callBack && callObj['thisObj'] === thisObj) {
                     return i;
                 }
             }
@@ -108,18 +117,18 @@ namespace fish {
          * @param modalColor 
          * @param modalAlpha 
          */
-        public static createStageModalBlocker(onTouch:Function = null, thisObj:any = null, modalColor:number = 0x0, modalAlpha:number = 0.75):StageModalBlocker {
-            let blocker :StageModalBlocker = new StageModalBlocker(onTouch, thisObj, modalColor, modalAlpha);
+        public static createStageModalBlocker(onTouch: Function = null, thisObj: any = null, modalColor: number = 0x0, modalAlpha: number = 0.75): StageModalBlocker {
+            let blocker: StageModalBlocker = new StageModalBlocker(onTouch, thisObj, modalColor, modalAlpha);
             return blocker;
         }
     }
 
     //舞台全屏遮罩
     export class StageModalBlocker extends eui.Image {
-        private onTouch:Function;
-        private thisObj:any;
-        private static texture:egret.RenderTexture;
-        constructor(onTouch:Function = null, thisObj:any = null, modalColor:number = 0x0, modalAlpha:number = 0.75) {
+        private onTouch: Function;
+        private thisObj: any;
+        private static texture: egret.RenderTexture;
+        constructor(onTouch: Function = null, thisObj: any = null, modalColor: number = 0x0, modalAlpha: number = 0.75) {
             super();
             this.onTouch = onTouch;
             thisObj = thisObj;
@@ -131,23 +140,23 @@ namespace fish {
             this.initTexture();
         }
 
-        private initTexture():void {
+        private initTexture(): void {
             this.source = '';
         }
 
-        public removeFromParent(dispose:boolean = false) :void {
-            if(this.parent) {
+        public removeFromParent(dispose: boolean = false): void {
+            if (this.parent) {
                 this.parent.removeChild(this);
             }
         }
 
-        private onResize():void {
+        private onResize(): void {
             this.width = StageManager.stageWidth;
             this.height = StageManager.stageHeight;
         }
 
-        private onBlockTouch():void {
-            if(this.onTouch) {
+        private onBlockTouch(): void {
+            if (this.onTouch) {
                 this.onTouch.call(this.thisObj);
             }
         }
