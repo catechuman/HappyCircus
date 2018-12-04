@@ -7,7 +7,7 @@ namespace game {
         }
 
         public initialize(): void {
-            // this.registScreen(ScreenType.LOADING_SCREEN, ScreenLoading);
+            this.registScreen(ScreenType.MainLoop, MainLoopScreen);
             // this.registScreen(ScreenType.PRELOAD_SCREEN, PreloadScreen);
             // this.registScreen(ScreenType.TEST_SCREEN, TestScreen, "test/testScreenSkin");
         }

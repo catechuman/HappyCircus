@@ -1,6 +1,6 @@
 namespace fish {
     export class Log {
-        private static mShowLog:boolean = false;
+        private static mShowLog:boolean = true;
         public static showLog(value:boolean):void {
             this.mShowLog = value;
         }

@@ -8,7 +8,7 @@ namespace fish {
 
         public static initialize(version: string, resourceRoot: string, onComplete?: Function, onError?: Function, thisObj?: any): void {
             ResourceManager.resourceRoot = resourceRoot ? resourceRoot : '';
-            RES.setMaxRetryTimes(3);//设置重试次数
+            // RES.setMaxRetryTimes(3);//设置重试次数
             if (fish.SystemManager.isWxGame && fish.SystemManager.isIOS) {
                 RES.setMaxLoadingThread(1);
             }

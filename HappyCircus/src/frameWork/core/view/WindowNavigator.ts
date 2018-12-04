@@ -163,6 +163,7 @@ namespace fish {
                     if (data) {
                         windowData.data = data;
                     }
+                    this.open(win);
                 }, () => {
                     this.close(win);
                 }, windowData.data);
