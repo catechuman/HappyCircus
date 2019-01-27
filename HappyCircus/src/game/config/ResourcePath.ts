@@ -39,7 +39,7 @@ namespace game {
         //获取皮肤地址(皮肤路径特殊，全路径)
         public static getSkinRes(path: any): string {
             if (!path) return null;
-            return ResourcePath.getResUrlByVersion("resource/skins/{0}.exml", path);
+            return ResourcePath.getResUrlByVersion("resource/eui_skins/{0}.exml", path);
         }
 
         //获取龙骨动画地址

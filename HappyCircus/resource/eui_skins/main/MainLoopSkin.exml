@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<e:Skin class="MainLoopSkin" minHeight="230" minWidth="450" xmlns:e="http://ns.egret.com/eui" xmlns:w="http://ns.egret.com/wing" width="640" height="1039">
+	<e:Image source="beijing_png" x="0" bottom="0"/>
+	<e:Image source="kulou1_png" y="486" horizontalCenter="0"/>
+	<e:Image id="lhand" source="Lgebo_png" x="82.74" y="592"/>
+	<e:Image id="rhand" source="Rgebo_png" x="359.48" y="592"/>
+	<e:Image id="lCircle" source="baiquan_png" y="671.06" anchorOffsetX="100" anchorOffsetY="100" x="105"/>
+	<e:Image id="rCircle" source="baiquan_png" y="675.61" anchorOffsetX="100" anchorOffsetY="100" x="535"/>
+	<e:Image id="ball" source="1lvqiu_png" y="725" x="22"/>
+</e:Skin>

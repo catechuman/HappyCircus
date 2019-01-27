@@ -95,7 +95,7 @@ namespace fish {
             }
 
             let loadSkin = () => {
-                if (skinUrl != null && instance.view.skinName != null) {
+                if (skinUrl != null && !instance.view.skinName) {
                     ResourceManager.loadSkin(skinUrl, initSkin, instance);
                 } else {
                     initSkin();
